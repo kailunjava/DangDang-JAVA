@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>DangDang</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<!-- 配置验证码的Servlet -->
+    <servlet>
+      <servlet-name>kaptcha</servlet-name>
+      <servlet-class>com.google.code.kaptcha.servlet.KaptchaServlet</servlet-class>   		
+    </servlet>
+    <servlet-mapping>
+       <servlet-name>kaptcha</servlet-name>
+       <url-pattern>/kaptcha.jpg</url-pattern>
+    </servlet-mapping>
+
+    <!-- 配置struts2拦截器 -->
+	<filter>
+		<filter-name>Struts2</filter-name>
+		<filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>Struts2</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- 登陆拦截信息的Filter-->
+     <filter>
+          <filter-name>loginFilter</filter-name>
+          <filter-class>com.zzu.filter.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+          <filter-name>loginFilter</filter-name>
+          <url-pattern>/order/order_ok.jsp</url-pattern> 
+          <url-pattern>/order/address_form.jsp</url-pattern>                         
+    </filter-mapping> 
+    <!-- 注册拦截信息的Filter -->
+     <filter>
+          <filter-name>registFilter</filter-name>
+          <filter-class>com.zzu.filter.RegistFilter</filter-class>
+    </filter>
+    <filter-mapping>
+          <filter-name>registFilter</filter-name>
+          <url-pattern>/user/register_ok.jsp</url-pattern> 
+          <url-pattern>/user/verify_form.jsp</url-pattern>                         
+    </filter-mapping>
+</web-app>

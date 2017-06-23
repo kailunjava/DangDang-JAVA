@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 一个映射文件只对一个接口负责 -->
+<mapper namespace="com.zzu.dao.ProductDao">
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+	<!-- 热销图书 -->
+	<select id="queryHot" resultType="com.zzu.entity.Product" >
+     select * from
+        (select p1.*,rownum r from 
+            (select p.* from dd_product p order by sales_count desc)
+              p1)
+     where r &lt;= 4
+    </select>
+    <!-- 最新上架图书 -->
+    <select id="queryNew" resultType="com.zzu.entity.Product" >
+     select * from
+        (select p1.*,rownum r from 
+            (select p.* from dd_product p order by putaway_time desc)
+              p1)
+     where r &lt;= 4
+  </select>
+  <!-- 编辑推荐图书 -->
+  <select id="queryTuiJian" resultType="com.zzu.entity.Product">
+    select * from
+        (select p1.*,rownum r from 
+             (select p.* from dd_product p order by click_rate desc)
+                 p1)
+    where r &lt;= 2
+  </select>
+    <!-- 查询新书热销榜 -->
+	<select id="queryProductHotBorad" resultType="com.zzu.entity.Product">
+		select * from 
+		    (select p.*,ROWNUM as r from 
+		        (select * from dd_product order by putaway_time DESC,sales_count DESC) p) 
+		where r &lt;= 8
+	</select>
+	<!-- 根据id查询图书详情 -->
+	<select id="queryProductById" parameterType="java.lang.Integer" resultType="com.zzu.entity.Product">
+		select * from dd_product where id = #{id}
+	</select>
+	
+	<!-- 根据一级分类id查询所属于他的二级分类的所有图书 -->
+	<select id="queryProductByOne" parameterType="java.lang.Integer" resultType="com.zzu.entity.Product">
+		select * from dd_product p  left join dd_category c  on p.category_id = c.id 
+        where c.parent_id=#{parent_id}		
+	</select>
+	<!-- 根据 商品所属二级分类id查询所有图书 -->
+	<select id="queryProductByTwo" parameterType="java.lang.Integer" resultType="com.zzu.entity.Product">
+		 select * from dd_product where category_id=#{id}	
+	</select>
+</mapper>

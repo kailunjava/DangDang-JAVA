@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.dao.CategoryDao">  
+  <!-- 一对多 -->
+  <resultMap type="com.zzu.entity.Category" id="category">
+     <id property="id" column="d1.id"/>
+     <result property="category_name" column="d1.category_name"/>
+	 <result property="parent_id" column="d1.parent_id"/>
+	 <result property="product_count" column="d1.product_count"/>
+	 <collection property="categorys" ofType="com.zzu.entity.Category">
+		<id property="id" column="d2.id"/>
+		<result property="category_name" column="d2.category_name"/>
+	    <result property="parent_id" column="d2.parent_id"/>
+	    <result property="product_count" column="d2.product_count"/>
+	 </collection>
+  </resultMap>
+   <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+  <!-- 查询所有分类信息 -->
+  <select id="queryAll" resultMap="category" >
+     select 
+       d1.id as "d1.id",
+       d1.category_name as "d1.category_name",
+       d1.parent_id as "d1.parent_id",
+       d1.product_count as "d1.product_count",
+       d2.id as "d2.id",
+       d2.category_name as "d2.category_name",
+       d2.parent_id as "d2.parent_id",
+       d2.product_count as "d2.product_count"
+     from dd_category d1 left join dd_category d2 on d2.parent_id=d1.id 
+     where d1.parent_id is null
+  </select>
+  <!-- 根据一级id查询分类信息 -->
+  <select id="queryCategoryByFirstId" parameterType="java.lang.Integer" resultMap="category">
+     select 
+       d1.id as "d1.id",
+       d1.category_name as "d1.category_name",
+       d1.parent_id as "d1.parent_id",
+       d1.product_count as "d1.product_count",
+       d2.id as "d2.id",
+       d2.category_name as "d2.category_name",
+       d2.parent_id as "d2.parent_id",
+       d2.product_count as "d2.product_count"
+     from dd_category d1 left join dd_category d2 on d2.parent_id=d1.id 
+     where d1.id =#{id}
+  </select>
+  
+</mapper>

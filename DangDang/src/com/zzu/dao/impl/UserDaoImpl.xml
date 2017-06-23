@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 一个映射文件只对一个接口负责 -->
+<mapper namespace="com.zzu.dao.UserDao">
+  <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+	<!-- 
+		id===方法名 
+		parameterType===接口对应方法参数类型
+		resultType===结果类型
+		JDBC中的"?"===#{参数名}设置
+	 -->
+	 <!-- 向数据库中d_user插入一条新数据 -->
+	 <insert id="insert" parameterType="com.zzu.entity.User">
+	   insert into dd_user values(seq_d_user.nextval,#{email},#{nickname},#{password},'N',0,null,null)
+	 </insert>
+	 <!-- 查询单个用户的信息 -->
+	 <select id="query" parameterType="java.lang.String" resultType="com.zzu.entity.User">
+	   select * from dd_user where email = #{email}
+	 </select>
+	 <!-- 修改 -->
+	 <update id="update" parameterType="java.lang.String">
+	   update dd_user set is_email_verify = 'Y' where email = #{email}
+	 </update>
+	 
+</mapper>

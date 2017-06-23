@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+	<!-- 关于用户的包 -->
+	<package name="user" namespace="/userAction" extends="struts-default">
+	    <!-- 注册所需的action -->
+	    <action name="register" class="com.zzu.action.UserAction" method="register">
+	       <result name="yes" type="redirect">                             
+               <param name="location">/user/verify_form.jsp</param>              
+            </result>
+           <result name="no" type="redirect">
+               <param name="location">/user/register_form.jsp</param>
+           </result>
+	    </action>
+	    <!-- 登录所需的action -->
+	    <action name="login" class="com.zzu.action.UserAction" method="login">
+	       <result name="yes" type="redirectAction">
+	           <param name="namespace">/mainAction</param>                               
+               <param name="actionName">main</param>           
+            </result>
+           <result name="no" type="redirect">
+               <param name="location">/user/login_form.jsp</param>
+           </result>
+            <result name="order" type="redirect">
+               <param name="location">/order/order_info.jsp</param>
+           </result>
+	    </action>
+	    <!-- 判断邮箱验证码 -->
+	    <action name="emailCode" class="com.zzu.action.UserAction" method="emailCode">
+	        <result name="yes" type="redirectAction">                             
+                 <param name="actionName">session</param>     
+            </result>
+           <result name="no" type="redirect">
+               <param name="location">/user/verify_form.jsp</param>
+           </result>
+	    </action>
+        <!-- 生成邮箱验证码 -->
+	    <action name="code" class="com.zzu.action.UserAction" method="code">
+	        <result name="yes" type="redirect">                             
+               <param name="location">/user/verify_form.jsp</param>              
+            </result>    
+	    </action>
+
+	    <!-- 保存用户信息 -->
+	    <action name="session" class="com.zzu.action.UserAction" method="session">
+	        <result name="yes" type="redirect">                             
+               <param name="location">/user/register_ok.jsp</param>              
+            </result> 
+	    </action>
+	    <!-- 登出清除session -->
+	    <action name="remove" class="com.zzu.action.UserAction" method="remove">
+	        <result name="yes" type="redirectAction">
+	           <param name="namespace">/mainAction</param>                             
+               <param name="actionName">main</param>            
+            </result>
+            <result name="no" type="redirectAction">
+               <param name="namespace">/mainAction</param>                             
+               <param name="actionName">main</param> 
+           </result> 
+	    </action>
+	</package>
+	<!-- 关于分类信息的表 -->
+	<package name="main" namespace="/mainAction" extends="struts-default">
+	     <!-- 跳转到显示所有模块的action -->	     
+	     <action name="main" class="com.zzu.action.MainAction" method="main">
+	        <result name="yes" >                             
+               /main/main.jsp             
+            </result> 
+	    </action>
+	    <!-- 显示图书详细信息action -->
+	    <action name="detail" class="com.zzu.action.MainAction" method="detail">
+	        <result name="yes" >                             
+               /main/product.jsp             
+            </result> 
+	    </action>
+ 
+	       
+	</package>
+	<!-- 关于分类展示的包 -->
+	<package name="book" namespace="/bookAction" extends="struts-default">
+	    
+	    <!-- 根据主页面分类信息显示图书列表 -->
+	    <action name="booklist" class="com.zzu.action.BookListAction" method="bookList">
+	        <result name="yes" >                             
+               /main/book_list.jsp             
+            </result> 
+	    </action>	  	       
+	</package>
+	<!-- 关于购物车的包 -->
+	<package name="cart" namespace="/cartAction" extends="struts-default">
+	    <interceptors>
+			<interceptor name="cartInterceptor" class="com.zzu.interceptor.CartInterceptor"/>
+			<interceptor-stack name="cartStack">
+				<interceptor-ref name="defaultStack"/>
+				<interceptor-ref name="cartInterceptor"/>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="cartStack"/>
+		<global-results>
+			<result name="yes" type="dispatcher">/cart/cart_list.jsp</result>
+		</global-results>
+	    <!-- 添加商品到购物车 -->
+	    <action name="addCartItem" class="com.zzu.action.CartAction" method="addCartItem">	    
+	    </action>	
+	    <!-- 移除商品-->
+	    <action name="removeCartItem" class="com.zzu.action.CartAction" method="removeCartItem"> 
+	    </action>  
+	    <!-- 修改商品-->
+	    <action name="modifyCartItem" class="com.zzu.action.CartAction" method="modifyCartItem">
+	    </action> 	 
+	    <!-- 恢复商品-->
+	    <action name="recoveryCartItem" class="com.zzu.action.CartAction" method="recoveryCartItem">	        
+	    </action> 	      
+	</package>
+	<!-- 关于订单的包 -->
+	<package name="order" namespace="/orderAction" extends="struts-default">
+	<!-- 声明拦截器 -->
+		<interceptors>
+			<interceptor name="toAddressInterceptor" class="com.zzu.interceptor.ToAddressInterceptor"></interceptor>														
+			<interceptor-stack name="toAddressStack">
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+				<interceptor-ref name="toAddressInterceptor"></interceptor-ref>				
+			</interceptor-stack>						
+		</interceptors>		
+		<default-interceptor-ref name="toAddressStack"></default-interceptor-ref>		
+		<global-results>
+			<result name="error" type="redirect">/user/login_form.jsp?uri=order</result>
+		</global-results>
+	<!-- 跳转至填充地址信息 -->
+	<action name="toAddress" class="com.zzu.action.OrderAction" method="toAddress">
+	    <result name="yes" type="dispatcher">/order/address_form.jsp</result>	    
+	</action>
+	<!-- 添加新地址 -->
+	<action name="addAddress" class="com.zzu.action.OrderAction" method="addAddress">
+	    <result name="yes" type="chain">toAddress</result>	
+	    <result name="no" type="redirect">/order/address_form_two.jsp</result>    
+	</action>
+	<action name="addOrder" class="com.zzu.action.OrderAction" method="addOrder">
+	    <result name="yes" type="redirect">
+	    /order/order_ok.jsp
+	    </result>
+	    <result name="no" type="redirect">
+	    /order/address_form.jsp
+	    </result>
+	</action>	
+	</package>
+	
+</struts>

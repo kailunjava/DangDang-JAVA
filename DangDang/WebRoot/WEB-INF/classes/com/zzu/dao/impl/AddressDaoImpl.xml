@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zzu.dao.AddressDao"> 
+  <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+  <!-- 插入新地址 --> 
+  <insert id="insertAddress" parameterType="com.zzu.entity.Address">
+     insert into dd_address 
+     values(dd_address_seq.nextval,#{receive_name},#{full_address},#{postal_code},#{mobile},#{phone},#{u_id})
+  </insert>
+  <!-- 查询所有地址信息 -->
+  <select id="queryAll" parameterType="java.lang.Integer" resultType="com.zzu.entity.Address">
+  select * from dd_address where u_id=#{u_id}
+  </select>
+</mapper>
